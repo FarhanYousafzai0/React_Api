@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BiSolidCategory } from "react-icons/bi";
 import { MdArrowDropDown } from "react-icons/md";
+import Review from './Review';
 
 const SingleProduct = ({
     images, brand, category, description, dimensions, price, discountPercentage, rating,
@@ -10,8 +11,7 @@ const SingleProduct = ({
     const { comment, date, reviewerEmail, reviewerName } = reviews[0] || {}; // Assuming you have an array of reviews and accessing the first one
     const discountedPrice = (price - (price * discountPercentage) / 100).toFixed(2);
     const [Read, setReadMore] = useState(false);
-    const [review, setReview] = useState(false); // Initialize the review state as false (hidden)
-
+    const [showReview,setShowReview] =useState(false);
     const handleRating = () => {
         let stars = "";
         for (let i = 0; i < Math.round(rating); i++) {
@@ -33,32 +33,14 @@ const SingleProduct = ({
             <div className='flex justify-between items-center'>
                 <h4 className="capitalize font-bold">{brand || "Unknown Brand"}</h4>
                 <MdArrowDropDown 
-                    onClick={() => setReview(!review)} // Toggle the review state on click
-                    className={`cursor-pointer`} 
+                    onClick={() =>setShowReview(!showReview)} // Toggle the review state on click
+                    className={`cursor-pointer ${showReview ? 'rotate-180':'rotate-0'} transition-all`} 
                     size={20} 
                 />
             </div>
 
             {/* Conditionally render review section */}
-            {review && (
-                <div className=' border-1 rounded-2xl p-2 overflow-hidden'>
-                    <p className="font-semibold text-sm text-gray-700">
-                        {reviewerName || "Anonymous User"}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                        {comment || "No comment provided."}
-                    </p>
-                    <p className="text-sm text-gray-400">
-                        Rating: {handleRating()}
-                    </p>
-                    <p className="text-sm text-gray-300">
-                        Reviewed on: {date || "Date not available"}
-                    </p>
-                    <p className="text-sm text-gray-400">
-                        Email: {reviewerEmail || "Email not provided"}
-                    </p>
-                </div>
-            )}
+           
 
             <h4 className="capitalize text-gray-500 flex items-center gap-1 mt-4">
                 <BiSolidCategory /> {category || "Unknown Category"}
@@ -84,7 +66,23 @@ const SingleProduct = ({
                 <p className="text-sm text-gray-500 mt-2 border-1 px-4 rounded-full line-through">
                     ${discountedPrice}
                 </p>
+
+
+
+
+
+
+
             </div>
+    
+
+            <div className={`overflow-hidden transition-all duration-300 ${showReview ? 'max-h-[300px]' : 'max-h-0'}`}>
+    {reviews.map((item, index) => (
+        <Review key={index} {...item} />
+    ))}
+</div>
+
+
             </div>
         </div>
     );
